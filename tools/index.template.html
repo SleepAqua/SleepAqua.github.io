@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Louis Tian — data engineer</title>
+<meta name="description" content="Data engineer: market data, pipeline checks, and simulations that put standard errors on the answer.">
+<meta name="theme-color" content="#0b0c0e">
+<meta property="og:title" content="Louis Tian — data engineer">
+<meta property="og:description" content="Market data, pipeline checks, and simulations that put standard errors on the answer.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0c0e'/%3E%3Cpath d='M9 23V10h3.2v10.2h6.4V23H9z' fill='%23e2a04a'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0b0c0e; --panel:#14171a; --panel-hi:#191d21;
+    --line:rgba(255,255,255,.1); --line-hi:rgba(226,160,74,.42);
+    --ink:#e9e6e0; --body:#b6b2ab; --dim:#8f8b84; --faint:#8a867f;
+    --accent:#e2a04a; --accent-soft:rgba(226,160,74,.12);
+    --sage:#8fb8a0; --clay:#c98a5e;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(900px 420px at 18% -12%,rgba(226,160,74,.07),transparent 70%),
+                     radial-gradient(700px 400px at 88% 0%,rgba(120,160,220,.045),transparent 72%);
+    background-repeat:no-repeat;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+  a{color:inherit;text-decoration:none}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:104px 0 68px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    display:flex;align-items:center;gap:10px;margin:0 0 26px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;background:var(--accent);border-radius:1px;display:block}
+  h1{
+    margin:0 0 26px;max-width:22ch;
+    font-size:clamp(34px,5.6vw,58px);font-weight:500;line-height:1.06;letter-spacing:-.032em;
+  }
+  h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--accent);white-space:nowrap}
+  .lede{margin:0;max-width:64ch;font-size:17.5px;line-height:1.68;color:var(--body)}
+  .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
+  .jump a{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+    transition:color .18s,border-color .18s,background .18s;
+  }
+  .jump a:hover{color:var(--ink);border-color:var(--line-hi);background:var(--accent-soft)}
+
+  /* ---------- sections ---------- */
+  section{padding:66px 0 10px;border-bottom:1px solid var(--line)}
+  .sec-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:baseline;margin-bottom:30px}
+  .sec-title{display:flex;align-items:baseline;gap:16px;min-width:0}
+  .num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em;flex:none}
+  h2{margin:0;font-size:23px;font-weight:500;letter-spacing:-.02em}
+  .sec-note{margin:0;max-width:44ch;font-size:14.5px;line-height:1.55;color:var(--faint);text-align:right}
+  @media(max-width:720px){.sec-head{grid-template-columns:1fr}.sec-note{text-align:left}}
+
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding-bottom:56px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+
+  /* ---------- cards ---------- */
+  .card{
+    position:relative;display:flex;flex-direction:column;min-width:0;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:24px 24px 22px;
+    transition:background .2s,border-color .2s,transform .2s;
+  }
+  .card:hover{background:var(--panel-hi);border-color:var(--line-hi);transform:translateY(-2px)}
+  .card-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .card h3{margin:0;font-size:17.5px;font-weight:500;letter-spacing:-.015em;font-family:var(--mono)}
+  .card h3 a::after{content:"";position:absolute;inset:0;border-radius:14px}
+  .card .kind{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);flex:none}
+  .card p{margin:0 0 16px;font-size:14.5px;line-height:1.62;color:var(--body)}
+  .card p b{color:var(--ink);font-weight:500}
+  .stack{margin-top:auto;display:flex;flex-wrap:wrap;gap:6px 0;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .stack span::before{content:"·";padding:0 8px;color:var(--line)}
+  .stack span:first-child::before{content:"";padding:0}
+  .card-links{position:relative;z-index:1;display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .card-links a{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);transition:color .16s,background .16s}
+  .card-links a:hover{color:var(--ink)}
+  .card-links a.demo{color:var(--accent)}
+  .card-links a.demo::after{content:" ↗"}
+  .card-links a.btn{
+    padding:6px 12px;border:1px solid var(--line-hi);border-radius:7px;background:var(--accent-soft);
+  }
+  .card-links a.btn:hover{color:#f2bd77;background:rgba(226,160,74,.2)}
+
+  /* ---------- figures ---------- */
+  .fig{margin:2px 0 16px;min-width:0}
+  .fig img{width:100%;max-width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .fig svg{display:block;width:100%;height:auto}
+  .figbody{min-width:0}
+  @media(max-width:600px){
+    .figbody{overflow-x:auto;scrollbar-width:thin}
+    .figbody::-webkit-scrollbar{height:4px}
+    .figbody::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3);border-radius:2px}
+    .figbody svg,.figbody img{min-width:420px}
+    .figbody + .figcap::after{content:" · scroll →";color:var(--dim)}
+  }
+  .figcap{margin:9px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--faint)}
+  .figcap.top{margin:0 0 9px}
+
+  /* gate bar */
+  .gatebar{display:flex;height:9px;border-radius:5px;overflow:hidden;background:#1c2024;margin:6px 0 0}
+  .gatebar i{display:block;height:100%}
+  .gatebar .p{background:#3f6b51;flex:62}
+  .gatebar .w{background:#7a6428;flex:3}
+  .gatebar .f{background:#8b3f31;flex:5}
+
+  /* key/value row */
+  .kv{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:4px 0 0}
+  .kv div{padding:13px 12px 12px 0}
+  .kv div + div{border-left:1px solid var(--line);padding-left:15px}
+  .kv b{display:block;font-family:var(--mono);font-size:17px;font-weight:400;color:var(--ink);letter-spacing:-.02em}
+  .kv span{display:block;margin-top:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);line-height:1.4}
+
+  /* diff */
+  .diff{font-family:var(--mono);font-size:12px;line-height:1.75;background:#0c0e10;border:1px solid var(--line);border-radius:9px;padding:11px 13px;overflow-x:auto;min-width:0}
+  .diff div{white-space:nowrap}
+  .diff .c{color:var(--faint)}
+  .diff .m{color:#c98a72}
+  .diff .p{color:var(--sage)}
+
+  /* states */
+  .states{font-family:var(--mono);font-size:11px;line-height:1.45}
+  .states div{display:flex;gap:10px;padding:7px 0;border-top:1px solid rgba(255,255,255,.06)}
+  .states div:first-child{border-top:0}
+  .states i{width:6px;height:6px;border-radius:50%;margin-top:5px;flex:none}
+  .states b{font-weight:400;color:var(--body);min-width:70px;flex:none}
+  .states span{color:var(--faint)}
+
+  /* featured case study */
+  .card.wide{grid-column:1/-1;padding:26px 26px 24px}
+  .card.wide p{max-width:78ch;margin-bottom:22px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stats div{padding:16px 18px 15px 0}
+  .stats div + div{border-left:1px solid var(--line);padding-left:20px}
+  .stats dd{margin:0 0 4px;font-family:var(--mono);font-size:clamp(19px,2.4vw,25px);letter-spacing:-.02em;color:var(--ink)}
+  .stats dt{margin:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .stats small{display:block;margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--faint)}
+  @media(max-width:720px){
+    .stats{grid-template-columns:1fr}
+    .stats div + div{border-left:0;border-top:1px solid var(--line);padding-left:0}
+  }
+  .card.wide .fig{margin-bottom:20px}
+
+  /* split card */
+  .grid.one{grid-template-columns:minmax(0,1fr)}
+  .card.split{display:grid;grid-template-columns:minmax(0,1fr) 280px;column-gap:30px;align-items:start}
+  .card.split > .card-top,.card.split > p,.card.split > .stack,.card.split > .card-links{grid-column:1}
+  .card.split > .fig{grid-column:2;grid-row:1/5;margin:0}
+  .card.split > .fig img{background:none;border-radius:8px}
+  .card.split.wide-diff{grid-template-columns:minmax(0,1fr) 430px}
+  .card.split.wide-diff > .fig{margin-top:4px}
+  @media(max-width:860px){
+    .card.split,.card.split.wide-diff{display:flex;flex-direction:column}
+    .card.split > .fig{max-width:220px;margin:2px 0 16px}
+    .card.split.wide-diff > .fig{max-width:none;width:100%}
+    .diff{font-size:10px}
+  }
+
+  /* ghost card */
+  .card.ghost{border-style:dashed;background:transparent}
+  .card.ghost:hover{background:rgba(226,160,74,.045);border-color:var(--line-hi);transform:none}
+  .card.ghost h3{color:var(--dim);font-family:var(--mono)}
+  .card.ghost p{color:var(--faint)}
+  .card.ghost .card-links span{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+
+  /* ---------- footer ---------- */
+  footer{padding:44px 0 72px}
+  .foot-row{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:baseline;justify-content:space-between}
+  .foot-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+  .foot-links a{color:var(--body);transition:color .16s}
+  .foot-links a:hover{color:var(--accent)}
+  .foot-meta{margin:0;font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.03em;line-height:1.8;text-align:right}
+  @media(max-width:640px){.foot-meta{text-align:left}}
+  .open{display:inline-flex;align-items:center;gap:8px;margin:0 0 30px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--dim)}
+  .open::before{content:"";width:6px;height:6px;border-radius:50%;background:#6fbf7f;box-shadow:0 0 0 3px rgba(111,191,127,.14)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Louis Tian · Data engineer</p>
+    <h1>The numbers have to be right <em>before the open.</em></h1>
+    <p class="lede">
+      Nearly three years building the market-data platform behind a Shanghai quant asset manager,
+      then independent consulting for private quant clients. Most of what I write is about getting
+      data in, knowing it is correct, and knowing when it is late — a wrong number is a trading
+      loss, not a bad chart.
+    </p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#data">Data</a>
+      <a href="#apps">Apps</a>
+      <a href="#games">Games &amp; simulations</a>
+      <a href="#tools">Tools</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="data" aria-labelledby="data-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">01</span><h2 id="data-h">Data engineering</h2></div>
+        <p class="sec-note">Pipelines, checks and market data. Synthetic or anonymised data throughout — no employer or client code.</p>
+      </div>
+      <div class="grid">
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/data-quality-gate">data-quality-gate</a></h3>
+            <span class="kind">Pipeline</span>
+          </div>
+          <p>
+            A daily file lands and nothing complains when a symbol stops updating, a day goes
+            missing or a column is quietly renamed. This gate checks the files before anything
+            downstream reads them and <b>exits non-zero</b>, so CI stops the pipeline instead of
+            a trader finding out.
+          </p>
+          <figure class="fig">
+            <div class="gatebar" role="img" aria-label="62 checks passed, 3 warnings, 5 failures">
+              <i class="p"></i><i class="w"></i><i class="f"></i>
+            </div>
+            <p class="figcap">demo fixture, 10 symbols: 62 pass · 3 warn · 5 fail · exit 1</p>
+          </figure>
+          <div class="stack"><span>Python</span><span>CI</span><span>data quality</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/data-quality-gate">Source</a></div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/tick-rollup">tick-rollup</a></h3>
+            <span class="kind">Market data</span>
+          </div>
+          <p>
+            Turns a file of trade prints into OHLCV bars one session at a time. The awkward parts —
+            hard session boundaries and ticks that arrive late — are the whole point; everything
+            else is small enough to read in an afternoon.
+          </p>
+          <figure class="fig">
+            <div class="kv">
+              <div><b>261,008</b><span>ticks / second</span></div>
+              <div><b>619</b><span>bars from 200k prints</span></div>
+              <div><b>869</b><span>late ticks, counted</span></div>
+            </div>
+            <p class="figcap">./run.sh benchmark · stdlib Python, one core</p>
+          </figure>
+          <div class="stack"><span>Python</span><span>streaming</span><span>benchmarks</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/tick-rollup">Source</a></div>
+        </article>
+
+        <article class="card wide">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/nav-smoothing-forensics">nav-smoothing-forensics</a></h3>
+            <span class="kind">Case study</span>
+          </div>
+          <p>
+            A NAV-only forensic test on an anonymised fixed-income wealth product: 97 observations
+            over 145 days, no holdings and no prospectus — one internal-consistency identity. If the
+            NAV accrues honestly, the change over a multi-day gap equals the sum of the daily
+            accruals. It does not, and the gap is concentrated.
+          </p>
+          <dl class="stats">
+            <div>
+              <dt>Six Mondays</dt>
+              <dd>6.1–12.5×</dd>
+              <small>the product's own daily accrual</small>
+            </div>
+            <div>
+              <dt>Share of return</dt>
+              <dd>53.2%</dd>
+              <small>of the period's total return, in six days</small>
+            </div>
+            <div>
+              <dt>Advertised 7-day</dt>
+              <dd>0.73 → 13.05%</dd>
+              <small>against a run-rate moving 2.10% → 1.30%</small>
+            </div>
+          </dl>
+          <figure class="fig">
+            <div class="figbody"><img src="assets/nav-forensics.png" width="1650" height="780" loading="lazy"
+                 alt="Line chart of the NAV index from June to November 2024 with six flagged injection days circled in red"></div>
+            <p class="figcap">fig. 1 — NAV index and the six flagged injection days, from the shipped analysis</p>
+          </figure>
+          <div class="card-links">
+            <a href="https://github.com/SleepAqua/nav-smoothing-forensics">Source</a>
+            <a href="https://github.com/SleepAqua/nav-smoothing-forensics/blob/main/REPORT.md">Read the report</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="apps" aria-labelledby="apps-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">02</span><h2 id="apps-h">Apps</h2></div>
+        <p class="sec-note">Things with a user on the other end, and no server behind them.</p>
+      </div>
+      <div class="grid one">
+
+        <article class="card split">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/PacePulse">PacePulse</a></h3>
+            <span class="kind">Live demo</span>
+          </div>
+          <p>
+            Offline-first HIIT and strength timer: a web app and an Android wrapper, history on the
+            device, no account and no server. The clock is rebuilt from timestamps when the tab
+            goes to the background.
+          </p>
+          <figure class="fig">
+            <img src="assets/pacepulse.webp" width="420" height="620" loading="lazy"
+                 alt="The PacePulse web app mid-set: remaining time, mode tabs and HIIT loop settings">
+          </figure>
+          <div class="stack"><span>TypeScript</span><span>React</span><span>Capacitor</span><span>PWA</span></div>
+          <div class="card-links">
+            <a class="btn demo" href="demos/pacepulse/">Open the timer</a>
+            <a href="https://github.com/SleepAqua/PacePulse">Source</a>
+          </div>
+        </article>
+
+        <article class="card split wide-diff">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/rag_im">rag_im</a></h3>
+            <span class="kind">Local AI</span>
+          </div>
+          <p>
+            Snapshots government immigration pages, diffs them section by section, and answers
+            questions about the rules with citations back to the paragraph. Runs locally with
+            <b>no API key</b>, which is also why there is no hosted demo of this one.
+          </p>
+          <figure class="fig">
+            <p class="figcap top">one generated change report: 1 added · 1 removed · 2 modified · 1 moved</p>
+            <div class="diff">
+              <div class="c">Eligibility · modified</div>
+              <div class="m">- You must be under 45 years of age when you are invited.</div>
+              <div class="p">+ You must be under 40 years of age when you are invited.</div>
+            </div>
+          </figure>
+          <div class="stack"><span>Python</span><span>LlamaIndex</span><span>ChromaDB</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/rag_im">Source</a></div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="games" aria-labelledby="games-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">03</span><h2 id="games-h">Games &amp; simulations</h2></div>
+        <p class="sec-note">Monte Carlo, because one hand tells you nothing about a strategy.</p>
+      </div>
+      <div class="grid">
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/mahjong-mc">mahjong-mc</a></h3>
+            <span class="kind">Simulation</span>
+          </div>
+          <p>
+            Four-player Japanese Mahjong, played millions of times so strategies can be compared
+            instead of argued about: win, self-draw, deal-in, riichi and placement side by side, on
+            a ruleset with furiten, chankan and han/fu scoring.
+          </p>
+          <figure class="fig">
+            <div class="figbody">{{SVG_MAHJONG}}</div>
+            <p class="figcap">2,000 games, seed 7 · greedy against three defensive seats</p>
+          </figure>
+          <div class="stack"><span>Python</span><span>Monte Carlo</span><span>multiprocessing</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/mahjong-mc">Source</a></div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/GapFiller">GapFiller</a></h3>
+            <span class="kind">Simulation</span>
+          </div>
+          <p>
+            Monte Carlo Yahtzee under full standard rules, bonuses included: 20,000 games per
+            strategy and a standard error on every mean, so a gap between strategies is a gap and
+            not a lucky run.
+          </p>
+          <figure class="fig">
+            <div class="figbody">{{SVG_GAPFILLER}}</div>
+            <p class="figcap">2,000 games per strategy · dot is the mean, bar is ±1 s.e.</p>
+          </figure>
+          <div class="stack"><span>Python</span><span>statistics</span><span>Monte Carlo</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/GapFiller">Source</a></div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="tools" aria-labelledby="tools-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">04</span><h2 id="tools-h">Tools</h2></div>
+        <p class="sec-note">Small things that fix one specific annoyance, properly.</p>
+      </div>
+      <div class="grid">
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/mousefix">mousefix</a></h3>
+            <span class="kind">Linux</span>
+          </div>
+          <p>
+            A Bluetooth mouse goes quiet and the usual advice is to reboot. This works out which of
+            four states the link is in, repairs what it can <b>without root</b>, and says plainly
+            what it could not fix.
+          </p>
+          <figure class="fig">
+            <div class="states">
+              <div><i style="background:#8b3f31"></i><b>radio off</b><span>hci0 blocked or powered down; cleared first</span></div>
+              <div><i style="background:var(--sage)"></i><b>working</b><span>input device present, nothing to do</span></div>
+              <div><i style="background:var(--clay)"></i><b>zombie</b><span>BlueZ says connected, no input behind it</span></div>
+              <div><i style="background:#6f7f8b"></i><b>absent</b><span>scan, then say plainly why it is not back</span></div>
+            </div>
+          </figure>
+          <div class="stack"><span>Bash</span><span>BlueZ</span><span>rfkill</span><span>udev</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/mousefix">Source</a></div>
+        </article>
+
+        <a class="card ghost" href="https://github.com/SleepAqua?tab=repositories">
+          <div class="card-top">
+            <h3>Everything else</h3>
+            <span class="kind">Archive</span>
+          </div>
+          <p>
+            Reading notes, syntax reviews and small scripts from 2018 onwards — an idiom-chain
+            game, a certificate generator, a Zhihu robot. Older, rougher, still there.
+          </p>
+          <div class="stack"><span>Python</span><span>notes</span><span>2018 →</span></div>
+          <div class="card-links"><span>github.com/SleepAqua ↗</span></div>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p class="open">Open to data engineering work</p>
+    <div class="foot-row">
+      <div class="foot-links">
+        <a href="https://github.com/SleepAqua">GitHub</a>
+        <a href="https://linkedin.com/in/xiaxu-tian">LinkedIn</a>
+      </div>
+      <p class="foot-meta">
+        Static HTML and CSS · no scripts, no cookies, no analytics<br>
+        Demos run entirely in your browser
+      </p>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
