@@ -44,10 +44,10 @@
   }
   .eyebrow::before{content:"";width:7px;height:7px;background:var(--accent);border-radius:1px;display:block}
   h1{
-    margin:0 0 26px;max-width:22ch;
+    margin:0 0 26px;max-width:24ch;
     font-size:clamp(34px,5.6vw,58px);font-weight:500;line-height:1.06;letter-spacing:-.032em;
   }
-  h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--accent);white-space:nowrap}
+  h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--accent)}
   .lede{margin:0;max-width:64ch;font-size:17.5px;line-height:1.68;color:var(--body)}
   .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
   .jump a{
@@ -161,10 +161,12 @@
   .card.split > .card-top,.card.split > p,.card.split > .stack,.card.split > .card-links{grid-column:1}
   .card.split > .fig{grid-column:2;grid-row:1/5;margin:0}
   .card.split > .fig img{background:none;border-radius:8px}
-  .card.split.wide-diff{grid-template-columns:minmax(0,1fr) 430px}
+  .shots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .shots img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:9px}
+  .card.split.split-wide,.card.split.wide-diff{grid-template-columns:minmax(0,1fr) 430px}
   .card.split.wide-diff > .fig{margin-top:4px}
   @media(max-width:860px){
-    .card.split,.card.split.wide-diff{display:flex;flex-direction:column}
+    .card.split,.card.split.split-wide,.card.split.wide-diff{display:flex;flex-direction:column}
     .card.split > .fig{max-width:220px;margin:2px 0 16px}
     .card.split.wide-diff > .fig{max-width:none;width:100%}
     .diff{font-size:10px}
@@ -194,12 +196,12 @@
 
   <header class="hero">
     <p class="eyebrow">Louis Tian · Data engineer</p>
-    <h1>The numbers have to be right <em>before the open.</em></h1>
+    <h1>I turn raw feeds into <em>numbers you can defend.</em></h1>
     <p class="lede">
       Nearly three years building the market-data platform behind a Shanghai quant asset manager,
       then independent consulting for private quant clients. Most of what I write is about getting
-      data in, knowing it is correct, and knowing when it is late — a wrong number is a trading
-      loss, not a bad chart.
+      data in, knowing it is correct, and knowing when it is late — a wrong number is a loss, not
+      a bad chart.
     </p>
     <nav class="jump" aria-label="Sections">
       <a href="#data">Data</a>
@@ -310,7 +312,7 @@
       </div>
       <div class="grid one">
 
-        <article class="card split">
+        <article class="card split split-wide">
           <div class="card-top">
             <h3><a href="https://github.com/SleepAqua/PacePulse">PacePulse</a></h3>
             <span class="kind">Live demo</span>
@@ -321,8 +323,13 @@
             goes to the background.
           </p>
           <figure class="fig">
-            <img src="assets/pacepulse.webp" width="420" height="620" loading="lazy"
-                 alt="The PacePulse web app mid-set: remaining time, mode tabs and HIIT loop settings">
+            <div class="shots">
+              <img src="assets/pacepulse-setup.webp" width="418" height="870" loading="lazy"
+                   alt="PacePulse on Android: title screen with mode tabs and the HIIT loop, exercise and rest settings">
+              <img src="assets/pacepulse-history.webp" width="418" height="870" loading="lazy"
+                   alt="PacePulse workout history: a 30-day grid with completed chest, back and leg sessions">
+            </div>
+            <p class="figcap">Android build: setting a session, and the 30-day history it keeps on the device</p>
           </figure>
           <div class="stack"><span>TypeScript</span><span>React</span><span>Capacitor</span><span>PWA</span></div>
           <div class="card-links">
