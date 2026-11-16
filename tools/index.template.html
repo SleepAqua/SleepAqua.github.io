@@ -44,9 +44,10 @@
   }
   .eyebrow::before{content:"";width:7px;height:7px;background:var(--accent);border-radius:1px;display:block}
   h1{
-    margin:0 0 26px;max-width:24ch;
-    font-size:clamp(34px,5.6vw,58px);font-weight:500;line-height:1.06;letter-spacing:-.032em;
+    margin:0 0 26px;max-width:36ch;
+    font-size:clamp(30px,4.4vw,47px);font-weight:500;line-height:1.12;letter-spacing:-.028em;
   }
+  h1 .nb{white-space:nowrap}
   h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--accent)}
   .lede{margin:0;max-width:64ch;font-size:17.5px;line-height:1.68;color:var(--body)}
   .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
@@ -195,13 +196,12 @@
 <div class="wrap">
 
   <header class="hero">
-    <p class="eyebrow">Louis Tian · Data engineer</p>
-    <h1>I turn raw feeds into <em>numbers you can defend.</em></h1>
+    <p class="eyebrow">Louis Tian</p>
+    <h1>Formerly a data engineer at a <span class="nb">quant firm.</span> <em>Now an independent developer and consultant.</em></h1>
     <p class="lede">
-      Nearly three years building the market-data platform behind a Shanghai quant asset manager,
-      then independent consulting for private quant clients. Most of what I write is about getting
-      data in, knowing it is correct, and knowing when it is late — a wrong number is a loss, not
-      a bad chart.
+      Three years on the market-data platform of a Shanghai quant asset manager: getting data in,
+      knowing it is correct, knowing when it is late — a wrong number is a loss, not a bad chart.
+      These days I take on the same work for private clients, and AI tooling where it earns its place.
     </p>
     <nav class="jump" aria-label="Sections">
       <a href="#data">Data</a>
