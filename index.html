@@ -12,9 +12,9 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0c0e'/%3E%3Cpath d='M9 23V10h3.2v10.2h6.4V23H9z' fill='%23e2a04a'/%3E%3C/svg%3E">
 <style>
   :root{
-    --bg:#0b0c0e; --panel:#111316; --panel-hi:#15181c;
-    --line:rgba(255,255,255,.085); --line-hi:rgba(226,160,74,.38);
-    --ink:#e9e6e0; --body:#b6b2ab; --dim:#8f8b84; --faint:#7c7872;
+    --bg:#0b0c0e; --panel:#14171a; --panel-hi:#191d21;
+    --line:rgba(255,255,255,.1); --line-hi:rgba(226,160,74,.42);
+    --ink:#e9e6e0; --body:#b6b2ab; --dim:#8f8b84; --faint:#8a867f;
     --accent:#e2a04a; --accent-soft:rgba(226,160,74,.12);
     --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
@@ -109,10 +109,13 @@
   .card.wide img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:10px;background:#fff}
   .card.wide figcaption{margin-top:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--faint)}
 
+  .card.ghost{border-style:dashed;background:transparent}
+  .card.ghost:hover{background:rgba(226,160,74,.045);border-color:var(--line-hi);transform:none}
+  .card.ghost h3{color:var(--dim);font-family:var(--mono)}
+  .card.ghost p{color:var(--faint)}
+  .card.ghost .card-links span{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+
   /* ---------- misc ---------- */
-  .more{padding:26px 0 60px;font-size:14.5px;color:var(--faint)}
-  .more a{color:var(--dim);border-bottom:1px solid var(--line);padding-bottom:1px;transition:color .16s,border-color .16s}
-  .more a:hover{color:var(--ink);border-color:var(--accent)}
 
   footer{padding:44px 0 72px}
   .foot-row{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:baseline;justify-content:space-between}
@@ -315,7 +318,7 @@
       </div>
       <div class="grid">
 
-        <article class="card" style="grid-column:1/-1">
+        <article class="card">
           <div class="card-top">
             <h3><a href="https://github.com/SleepAqua/mousefix">mousefix</a></h3>
             <span class="kind">Linux</span>
@@ -329,13 +332,21 @@
           <div class="card-links"><a href="https://github.com/SleepAqua/mousefix">Source</a></div>
         </article>
 
+        <a class="card ghost" href="https://github.com/SleepAqua?tab=repositories">
+          <div class="card-top">
+            <h3>Everything else</h3>
+            <span class="kind">Archive</span>
+          </div>
+          <p>
+            Reading notes, syntax reviews and small scripts from 2018 onwards — an idiom-chain
+            game, a certificate generator, a Zhihu robot. Older, rougher, still there.
+          </p>
+          <div class="stack"><span>Python</span><span>notes</span><span>2018 →</span></div>
+          <div class="card-links"><span>github.com/SleepAqua ↗</span></div>
+        </a>
+
       </div>
     </section>
-
-    <p class="more">
-      Earlier notes, reading logs and small scripts from 2018 onwards are on
-      <a href="https://github.com/SleepAqua?tab=repositories">the GitHub profile</a>.
-    </p>
 
   </main>
 
