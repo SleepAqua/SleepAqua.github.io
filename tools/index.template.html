@@ -39,10 +39,16 @@
   /* ---------- hero ---------- */
   .hero{padding:104px 0 68px;border-bottom:1px solid var(--line)}
   .eyebrow{
-    display:flex;align-items:center;gap:10px;margin:0 0 26px;
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;margin:0 0 26px;
     font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
   }
-  .eyebrow::before{content:"";width:7px;height:7px;background:var(--accent);border-radius:1px;display:block}
+  .eyebrow::before{content:"";width:7px;height:7px;background:var(--accent);border-radius:1px;display:block;flex:none}
+  .eyebrow .who{flex:none}
+  .eyebrow .open{
+    margin-left:auto;display:inline-flex;align-items:center;gap:8px;
+    font-size:10.5px;letter-spacing:.1em;color:var(--dim);
+  }
+  .eyebrow .open::before{content:"";width:6px;height:6px;border-radius:50%;background:#6fbf7f;box-shadow:0 0 0 3px rgba(111,191,127,.14)}
   h1{
     margin:0 0 26px;max-width:36ch;
     font-size:clamp(30px,4.4vw,47px);font-weight:500;line-height:1.12;letter-spacing:-.028em;
@@ -187,17 +193,13 @@
   .foot-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.06em}
   .foot-links a{color:var(--body);transition:color .16s}
   .foot-links a:hover{color:var(--accent)}
-  .foot-meta{margin:0;font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.03em;line-height:1.8;text-align:right}
-  @media(max-width:640px){.foot-meta{text-align:left}}
-  .open{display:inline-flex;align-items:center;gap:8px;margin:0 0 30px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--dim)}
-  .open::before{content:"";width:6px;height:6px;border-radius:50%;background:#6fbf7f;box-shadow:0 0 0 3px rgba(111,191,127,.14)}
-</style>
+  </style>
 </head>
 <body>
 <div class="wrap">
 
   <header class="hero">
-    <p class="eyebrow">Louis Tian</p>
+    <p class="eyebrow"><span class="who">Louis Tian</span><span class="open">Open to data engineering work</span></p>
     <h1>Formerly a data engineer at a quant firm.<br class="br-d">
       <em>Now independent, building with AI —<br class="br-d">
       accountable for what ships.</em></h1>
@@ -461,16 +463,11 @@
   </main>
 
   <footer>
-    <p class="open">Open to data engineering work</p>
     <div class="foot-row">
       <div class="foot-links">
         <a href="https://github.com/SleepAqua">GitHub</a>
         <a href="https://linkedin.com/in/xiaxu-tian">LinkedIn</a>
       </div>
-      <p class="foot-meta">
-        Static HTML and CSS · no scripts, no cookies, no analytics<br>
-        Demos run entirely in your browser
-      </p>
     </div>
   </footer>
 
