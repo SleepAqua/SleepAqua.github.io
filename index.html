@@ -1,1 +1,358 @@
-"Hello World" 
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Louis Tian — data engineering</title>
+<meta name="description" content="Data engineering, mostly the unglamorous half: market data, pipeline checks, and simulations that put standard errors on the answer.">
+<meta name="theme-color" content="#0b0c0e">
+<meta property="og:title" content="Louis Tian — data engineering">
+<meta property="og:description" content="Market data, pipeline checks, and simulations that put standard errors on the answer.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0c0e'/%3E%3Cpath d='M9 23V10h3.2v10.2h6.4V23H9z' fill='%23e2a04a'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0b0c0e; --panel:#111316; --panel-hi:#15181c;
+    --line:rgba(255,255,255,.085); --line-hi:rgba(226,160,74,.38);
+    --ink:#e9e6e0; --body:#b6b2ab; --dim:#8f8b84; --faint:#7c7872;
+    --accent:#e2a04a; --accent-soft:rgba(226,160,74,.12);
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(900px 420px at 18% -12%,rgba(226,160,74,.07),transparent 70%),
+                     radial-gradient(700px 400px at 88% 0%,rgba(120,160,220,.045),transparent 72%);
+    background-repeat:no-repeat;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+  a{color:inherit;text-decoration:none}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:104px 0 68px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    display:flex;align-items:center;gap:10px;margin:0 0 26px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;background:var(--accent);border-radius:1px;display:block}
+  h1{
+    margin:0 0 26px;max-width:21ch;
+    font-size:clamp(34px,5.6vw,58px);font-weight:500;line-height:1.06;letter-spacing:-.032em;
+  }
+  h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--accent)}
+  .lede{margin:0;max-width:64ch;font-size:17.5px;line-height:1.68;color:var(--body)}
+  .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
+  .jump a{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+    transition:color .18s,border-color .18s,background .18s;
+  }
+  .jump a:hover{color:var(--ink);border-color:var(--line-hi);background:var(--accent-soft)}
+
+  /* ---------- sections ---------- */
+  section{padding:66px 0 10px;border-bottom:1px solid var(--line)}
+  .sec-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:baseline;margin-bottom:30px}
+  .sec-title{display:flex;align-items:baseline;gap:16px;min-width:0}
+  .num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.1em;flex:none}
+  h2{margin:0;font-size:23px;font-weight:500;letter-spacing:-.02em}
+  .sec-note{margin:0;max-width:44ch;font-size:14.5px;line-height:1.55;color:var(--faint);text-align:right}
+  @media(max-width:720px){.sec-head{grid-template-columns:1fr}.sec-note{text-align:left}}
+
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding-bottom:56px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+
+  /* ---------- cards ---------- */
+  .card{
+    position:relative;display:flex;flex-direction:column;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:24px 24px 22px;
+    transition:background .2s,border-color .2s,transform .2s;
+  }
+  .card:hover{background:var(--panel-hi);border-color:var(--line-hi);transform:translateY(-2px)}
+  .card-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .card h3{margin:0;font-size:17.5px;font-weight:500;letter-spacing:-.015em;font-family:var(--mono)}
+  .card h3 a::after{content:"";position:absolute;inset:0;border-radius:14px}
+  .card .kind{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);flex:none}
+  .card p{margin:0 0 18px;font-size:14.5px;line-height:1.62;color:var(--body)}
+  .card p b{color:var(--ink);font-weight:500}
+  .stack{margin-top:auto;display:flex;flex-wrap:wrap;gap:6px 0;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .stack span::before{content:"·";padding:0 8px;color:var(--line)}
+  .stack span:first-child::before{content:"";padding:0}
+  .card-links{position:relative;z-index:1;display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .card-links a{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);transition:color .16s}
+  .card-links a:hover{color:var(--ink)}
+  .card-links a.demo{color:var(--accent)}
+  .card-links a.demo:hover{color:#f2bd77}
+  .card-links a.demo::after{content:" ↗"}
+
+  /* featured case study */
+  .card.wide{grid-column:1/-1;padding:26px 26px 24px}
+  .card.wide p{max-width:78ch;margin-bottom:22px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:0 0 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stats div{padding:16px 18px 15px 0}
+  .stats div + div{border-left:1px solid var(--line);padding-left:20px}
+  .stats dd{margin:0 0 4px;font-family:var(--mono);font-size:clamp(19px,2.4vw,25px);letter-spacing:-.02em;color:var(--ink)}
+  .stats dt{margin:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .stats small{display:block;margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--faint)}
+  @media(max-width:720px){
+    .stats{grid-template-columns:1fr}
+    .stats div + div{border-left:0;border-top:1px solid var(--line);padding-left:0}
+  }
+  .card.wide figure{margin:0 0 22px}
+  .card.wide img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .card.wide figcaption{margin-top:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--faint)}
+
+  /* ---------- misc ---------- */
+  .more{padding:26px 0 60px;font-size:14.5px;color:var(--faint)}
+  .more a{color:var(--dim);border-bottom:1px solid var(--line);padding-bottom:1px;transition:color .16s,border-color .16s}
+  .more a:hover{color:var(--ink);border-color:var(--accent)}
+
+  footer{padding:44px 0 72px}
+  .foot-row{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:baseline;justify-content:space-between}
+  .foot-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+  .foot-links a{color:var(--body);transition:color .16s}
+  .foot-links a:hover{color:var(--accent)}
+  .foot-meta{margin:0;font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.03em;line-height:1.8;text-align:right}
+  @media(max-width:640px){.foot-meta{text-align:left}}
+  .open{display:inline-flex;align-items:center;gap:8px;margin:0 0 30px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--dim)}
+  .open::before{content:"";width:6px;height:6px;border-radius:50%;background:#6fbf7f;box-shadow:0 0 0 3px rgba(111,191,127,.14)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Louis Tian</p>
+    <h1>Data engineering, mostly <em>the unglamorous half</em>.</h1>
+    <p class="lede">
+      Nearly three years building the market-data platform behind a Shanghai quant asset manager,
+      then independent consulting for private quant clients. Most of what I write is about getting
+      data in, knowing it is correct, and knowing when it is late — a wrong number before the open
+      is a trading loss, not a bad chart.
+    </p>
+    <nav class="jump" aria-label="Sections">
+      <a href="#data">Data</a>
+      <a href="#apps">Apps</a>
+      <a href="#games">Games &amp; simulations</a>
+      <a href="#tools">Tools</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="data" aria-labelledby="data-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">01</span><h2 id="data-h">Data engineering</h2></div>
+        <p class="sec-note">Pipelines, checks and market data. Synthetic or anonymised data throughout — no employer or client code.</p>
+      </div>
+      <div class="grid">
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/data-quality-gate">data-quality-gate</a></h3>
+            <span class="kind">Pipeline</span>
+          </div>
+          <p>
+            A daily file lands and nothing complains when a symbol stops updating, a day goes
+            missing or a column is quietly renamed. This gate checks the files before anything
+            downstream reads them and <b>exits non-zero</b>, so CI stops the pipeline instead of
+            a trader finding out.
+          </p>
+          <div class="stack"><span>Python</span><span>CI</span><span>data quality</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/data-quality-gate">Source</a></div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/tick-rollup">tick-rollup</a></h3>
+            <span class="kind">Market data</span>
+          </div>
+          <p>
+            Turns a file of trade prints into OHLCV bars one session at a time. The awkward parts —
+            hard session boundaries and ticks that arrive late — are the whole point; everything
+            else is small enough to read in an afternoon. Stdlib Python, <b>~260k ticks/s</b>.
+          </p>
+          <div class="stack"><span>Python</span><span>streaming</span><span>benchmarks</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/tick-rollup">Source</a></div>
+        </article>
+
+        <article class="card wide">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/nav-smoothing-forensics">nav-smoothing-forensics</a></h3>
+            <span class="kind">Case study</span>
+          </div>
+          <p>
+            A NAV-only forensic test on an anonymised fixed-income wealth product: 97 observations
+            over 145 days, no holdings and no prospectus — one internal-consistency identity. If the
+            NAV accrues honestly, the change over a multi-day gap equals the sum of the daily
+            accruals. It does not, and the gap is concentrated.
+          </p>
+          <dl class="stats">
+            <div>
+              <dt>Six Mondays</dt>
+              <dd>6.1–12.5×</dd>
+              <small>the product's own daily accrual</small>
+            </div>
+            <div>
+              <dt>Share of return</dt>
+              <dd>53.2%</dd>
+              <small>of the period's total return, in six days</small>
+            </div>
+            <div>
+              <dt>Advertised 7-day</dt>
+              <dd>0.73 → 13.05%</dd>
+              <small>against a run-rate moving 2.10% → 1.30%</small>
+            </div>
+          </dl>
+          <figure>
+            <img src="assets/nav-forensics.png" width="1650" height="780" loading="lazy"
+                 alt="Line chart of the NAV index from June to November 2024 with six flagged injection days circled in red">
+            <figcaption>fig. 1 — NAV index and the six flagged injection days, from the shipped analysis</figcaption>
+          </figure>
+          <div class="card-links">
+            <a href="https://github.com/SleepAqua/nav-smoothing-forensics">Source</a>
+            <a href="https://github.com/SleepAqua/nav-smoothing-forensics/blob/main/REPORT.md">Read the report</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="apps" aria-labelledby="apps-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">02</span><h2 id="apps-h">Apps</h2></div>
+        <p class="sec-note">Things with a user on the other end, and no server behind them.</p>
+      </div>
+      <div class="grid">
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/PacePulse">PacePulse</a></h3>
+            <span class="kind">Live demo</span>
+          </div>
+          <p>
+            An offline-first HIIT and strength timer: a web app plus an Android wrapper, workout
+            history in the device's own storage, no account and no backend. When the tab goes to
+            the background the clock is <b>rebuilt from timestamps</b> rather than trusted to a
+            setInterval tick; the Android build keeps counting in a foreground service with the
+            screen off.
+          </p>
+          <div class="stack"><span>TypeScript</span><span>React</span><span>Capacitor</span><span>PWA</span></div>
+          <div class="card-links">
+            <a class="demo" href="demos/pacepulse/">Open the timer</a>
+            <a href="https://github.com/SleepAqua/PacePulse">Source</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/rag_im">rag_im</a></h3>
+            <span class="kind">Local AI</span>
+          </div>
+          <p>
+            Snapshots government immigration pages, diffs them section by section, and answers
+            questions about the rules with citations back to the paragraph. Runs locally with
+            <b>no API key</b>. That is also why there is no hosted demo of this one.
+          </p>
+          <div class="stack"><span>Python</span><span>LlamaIndex</span><span>ChromaDB</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/rag_im">Source</a></div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="games" aria-labelledby="games-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">03</span><h2 id="games-h">Games &amp; simulations</h2></div>
+        <p class="sec-note">Monte Carlo, because one hand tells you nothing about a strategy.</p>
+      </div>
+      <div class="grid">
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/mahjong-mc">mahjong-mc</a></h3>
+            <span class="kind">Simulation</span>
+          </div>
+          <p>
+            Four-player Japanese Mahjong, played millions of times so strategies can be compared
+            instead of argued about: win, self-draw, deal-in, riichi and average placement side by
+            side, on a ruleset with furiten, chankan and han/fu scoring. Pure Python, no
+            dependencies, every core.
+          </p>
+          <div class="stack"><span>Python</span><span>Monte Carlo</span><span>multiprocessing</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/mahjong-mc">Source</a></div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/GapFiller">GapFiller</a></h3>
+            <span class="kind">Simulation</span>
+          </div>
+          <p>
+            Monte Carlo Yahtzee under full standard rules, with the upper-section and Yahtzee
+            bonuses: 20,000 games per strategy and a standard error on every mean, 138.19 ± 0.28 for
+            the best against 111.60 ± 0.20 for random play. A solved optimal-play baseline is
+            included for comparison.
+          </p>
+          <div class="stack"><span>Python</span><span>statistics</span><span>Monte Carlo</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/GapFiller">Source</a></div>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="tools" aria-labelledby="tools-h">
+      <div class="sec-head">
+        <div class="sec-title"><span class="num">04</span><h2 id="tools-h">Tools</h2></div>
+        <p class="sec-note">Small things that fix one specific annoyance, properly.</p>
+      </div>
+      <div class="grid">
+
+        <article class="card" style="grid-column:1/-1">
+          <div class="card-top">
+            <h3><a href="https://github.com/SleepAqua/mousefix">mousefix</a></h3>
+            <span class="kind">Linux</span>
+          </div>
+          <p>
+            A Bluetooth mouse goes quiet and the usual advice is to reboot. This works out whether
+            the radio is switched off, whether the link is a zombie, or whether the peer is simply
+            asleep — then repairs what it can <b>without root</b> and says plainly what it could not fix.
+          </p>
+          <div class="stack"><span>Bash</span><span>BlueZ</span><span>rfkill</span><span>udev</span></div>
+          <div class="card-links"><a href="https://github.com/SleepAqua/mousefix">Source</a></div>
+        </article>
+
+      </div>
+    </section>
+
+    <p class="more">
+      Earlier notes, reading logs and small scripts from 2018 onwards are on
+      <a href="https://github.com/SleepAqua?tab=repositories">the GitHub profile</a>.
+    </p>
+
+  </main>
+
+  <footer>
+    <p class="open">Open to data engineering work</p>
+    <div class="foot-row">
+      <div class="foot-links">
+        <a href="https://github.com/SleepAqua">GitHub</a>
+        <a href="https://linkedin.com/in/xiaxu-tian">LinkedIn</a>
+      </div>
+      <p class="foot-meta">
+        Static HTML and CSS · no scripts, no cookies, no analytics<br>
+        Demos run entirely in your browser
+      </p>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
