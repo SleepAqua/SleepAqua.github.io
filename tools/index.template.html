@@ -48,6 +48,7 @@
     font-size:clamp(30px,4.4vw,47px);font-weight:500;line-height:1.12;letter-spacing:-.028em;
   }
   h1 .nb{white-space:nowrap}
+  @media(max-width:760px){h1 br.br-d{display:none}}
   h1 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--accent)}
   .lede{margin:0;max-width:64ch;font-size:17.5px;line-height:1.68;color:var(--body)}
   .jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px}
@@ -197,11 +198,14 @@
 
   <header class="hero">
     <p class="eyebrow">Louis Tian</p>
-    <h1>Formerly a data engineer at a <span class="nb">quant firm.</span> <em>Now an independent developer and consultant.</em></h1>
+    <h1>Formerly a data engineer at a quant firm.<br class="br-d">
+      <em>Now independent, building with AI —<br class="br-d">
+      accountable for what ships.</em></h1>
     <p class="lede">
       Three years on the market-data platform of a Shanghai quant asset manager: getting data in,
       knowing it is correct, knowing when it is late — a wrong number is a loss, not a bad chart.
-      These days I take on the same work for private clients, and AI tooling where it earns its place.
+      The work since has been the whole path, pipeline to app, with AI doing the parts it is good at
+      and a person still answerable for the result.
     </p>
     <nav class="jump" aria-label="Sections">
       <a href="#data">Data</a>
